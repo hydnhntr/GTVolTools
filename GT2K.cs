@@ -20,6 +20,8 @@ namespace GT2Vol
             {
                 using (FileStream vol2k = new FileStream(args[1], FileMode.Open, FileAccess.Read))
                 {
+                    string outputDir = (args.Length >= 3) ? args[2] : VolFile.DefaultOutputDir;
+                    Directory.CreateDirectory(outputDir);
                     List<GT2KVolEntry> files = new List<GT2KVolEntry>();
                     BinaryReader br = new BinaryReader(vol2k);
                     string name = br.ReadString();
@@ -49,7 +51,7 @@ namespace GT2Vol
                         string fileName = files[i].name;
 
                         string[] pathParts = fileName.Split(pathSeps);
-                        sb.AppendFormat("{0}{1}", args[2], Path.DirectorySeparatorChar);
+                        sb.AppendFormat("{0}{1}", outputDir, Path.DirectorySeparatorChar);
                         if (pathParts.Length > 1)
                         {
                             sb.AppendFormat("{0}{1}", pathParts[0], Path.DirectorySeparatorChar);

@@ -28,6 +28,7 @@ namespace GT2Vol
         private long volFileSize;
         private bool disposed;
         public static string DecompDir = "decomp";
+        public const string DefaultOutputDir = "extracted";
         private enum ExplodeEvents
         {
             NotRunning = 0,

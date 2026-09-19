@@ -307,8 +307,10 @@ namespace GT2Vol
                 Console.Error.WriteLine("VOL file '{0}' doesn't exist!", args[1]);
                 return;
             }
+            string outputDir = (args.Length >= 3) ? args[2] : VolFile.DefaultOutputDir;
+            Directory.CreateDirectory(outputDir);
             GT3Vol volFile = new GT3Vol(args[1]);
-            volFile.Extract(args[2], args.Length >= 4, callback);
+            volFile.Extract(outputDir, args.Length >= 4, callback);
         }
 
         private class VolHeaderEntry

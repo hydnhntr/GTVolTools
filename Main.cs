@@ -25,15 +25,17 @@ namespace GT2Vol
             // GTVolTool.exe -r3(ebuild GT3) C:\\Path\\To\\explodedVol NewVolFile <-d> OR
 
             Console.Error.WriteLine(
-@"Usage: GTVolTool.exe -e2(xplode GT2) C:\\Path\\To\\GT2.Vol OutputDir <-u> OR
+@"Usage: GTVolTool.exe -e2(xplode GT2) C:\\Path\\To\\GT2.Vol <OutputDir <-u>> OR
        GTVolTool.exe -l2(ist GT2) C:\\Path\\To\\GT2.vol OR
        GTVolTool.exe -r2(ebuild GT2) C:\\Path\\To\\explodedVol NewVolFile <-r> OR
-       GTVolTool.exe -e3(xplode GT3) C:\\Path\\To\\GT3.vol OutputDir <-u> OR
+       GTVolTool.exe -e3(xplode GT3) C:\\Path\\To\\GT3.vol <OutputDir <-u>> OR
        GTVolTool.exe -l3(list GT3) C:\\Path\\To\\GT3.Vol OR
-       GTVolTool.exe -e2k(xplode GT2000) C:\\Path\\To\\GT2K.Vol OutputDir OR
+       GTVolTool.exe -e2k(xplode GT2000) C:\\Path\\To\\GT2K.Vol <OutputDir> OR
        GTVolTool.exe -l2k(list GT2K) C:\\Path\\To\\GT2K.vol
+For -e2, -e3 and -e2k
+OutputDir defaults to '" + VolFile.DefaultOutputDir + @"' in the current folder.
 For -e2 and -e3
-The last argument is optional and can be anything. If specified,
+The argument after OutputDir is optional and can be anything. If specified,
 any gzip archives (those files ending in .gz) will be decompressed
 into a '" + VolFile.DecompDir + @"' folder within the folder where the .gz file is.
 For -r2
@@ -82,7 +84,8 @@ the tool will rebuild a VOL compatible with the demos rather than the final game
                     return;
                 }
                 theVol.ParseToc(new VolFile.TocFileNotify(EmbeddedFileNotify));
-                theVol.Explode(args[2], decompGZ, new VolFile.ExplodeProgressCallback(WriteToConsole));
+                string outputDir = (args.Length >= 3) ? args[2] : VolFile.DefaultOutputDir;
+                theVol.Explode(outputDir, decompGZ, new VolFile.ExplodeProgressCallback(WriteToConsole));
             }
         }
 
