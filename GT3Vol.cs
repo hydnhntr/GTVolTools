@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Core;
@@ -63,6 +64,9 @@ namespace GT2Vol
         }
 
         const string listFormat = "{0}\t{1}\t{2:x}\t{3:x}\t{4:x}";
+        // GT3 compresses with gzip. GT4 Prologue and later use the same VOL layout with PS2ZIP:
+        // this magic number, the negated decompressed size, then raw deflate.
+        const uint PS2ZipMagic = 0xFFF7EEC5;
         FileStream volFile;
         VolEntryInfo rootVolEntry;
         uint compressedFlag;
@@ -254,17 +258,26 @@ namespace GT2Vol
                     {
                         Directory.CreateDirectory(decompDir);
                         string decompFileName = Path.Combine(decompDir, inf.name);
-                        MemoryStream ms = new MemoryStream(data, false);
-                        GZipInputStream gzIn = new GZipInputStream(ms);
                         callback(String.Format("Decompressing {0}", inf.name));
+                        using (Stream compIn = OpenDecompressor(data))
                         using (FileStream decompFile = new FileStream(decompFileName, FileMode.Create, FileAccess.Write))
                         {
                             byte[] buffer = new byte[8192];
-                            StreamUtils.Copy(gzIn, decompFile, buffer);
+                            StreamUtils.Copy(compIn, decompFile, buffer);
                         }
                     }
                 }
             }
+        }
+
+        private static Stream OpenDecompressor(byte[] data)
+        {
+            if ((data.Length >= 8) && (BitConverter.ToUInt32(data, 0) == PS2ZipMagic))
+            {
+                MemoryStream deflated = new MemoryStream(data, 8, data.Length - 8, false);
+                return new DeflateStream(deflated, CompressionMode.Decompress);
+            }
+            return new GZipInputStream(new MemoryStream(data, false));
         }
 
         public void Extract(string path, bool decomp, VolFile.ExplodeProgressCallback callback)

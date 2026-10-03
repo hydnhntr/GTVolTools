@@ -38,6 +38,7 @@ For -e2 and -e3
 The argument after OutputDir is optional and can be anything. If specified,
 any gzip archives (those files ending in .gz) will be decompressed
 into a '" + VolFile.DecompDir + @"' folder within the folder where the .gz file is.
+For -e3, files compressed with PS2ZIP (GT4 Prologue and later) are decompressed too.
 For -r2
 The last argument is optional and can be anything. If specified,
 files in any '" + VolFile.DecompDir + @"' child directories will be compressed and have .gz
